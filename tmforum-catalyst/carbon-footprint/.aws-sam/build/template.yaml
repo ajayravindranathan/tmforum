@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Sample SAM Template for my first API with IaC
+
+  '
+Globals:
+  Api:
+    MethodSettings:
+    - ResourcePath: /*
+      HttpMethod: '*'
+      DataTraceEnabled: true
+      LoggingLevel: INFO
+      MetricsEnabled: true
+  Function:
+    Timeout: 3
+    Runtime: python3.7
+Resources:
+  CarbonFootprintAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      OpenApiVersion: 3.0.3
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: ../../openapi.yaml
+      EndpointConfiguration:
+        Type: REGIONAL
+  CarbonCalculator:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: CarbonCalculator
+      Handler: get-carbon-footprint.lambda_handler
+    Metadata:
+      SamResourceId: CarbonCalculator
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - apigateway.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+      - PolicyName: AllowLambdaExec
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action: lambda:InvokeFunction
+            Resource:
+              Fn::GetAtt:
+              - CarbonCalculator
+              - Arn
+  CarbonFootprintUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: CarbonFootprintUserPool
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+  CarbonFootprintUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId:
+        Ref: CarbonFootprintUserPool
+      ClientName: Carbon-Footprint-App-Client
+      GenerateSecret: false
+      ExplicitAuthFlows:
+      - ALLOW_ADMIN_USER_PASSWORD_AUTH
+      - ALLOW_REFRESH_TOKEN_AUTH
+      - ALLOW_CUSTOM_AUTH
+      - ALLOW_USER_PASSWORD_AUTH
+      - ALLOW_USER_SRP_AUTH
+Outputs:
+  CarbonFootprintAPI:
+    Description: API Gateway endpoint URL to call the carbon footprint api
+    Value:
+      Fn::Sub: https://${CarbonFootprintAPI}.execute-api.${AWS::Region}.amazonaws.com/dev/
+  CognitoUserPool:
+    Description: Cognito User Pool Id
+    Value:
+      Ref: CarbonFootprintUserPool
+  CostCalculatorUserPoolClient:
+    Description: App Client Id
+    Value:
+      Ref: CarbonFootprintUserPoolClient

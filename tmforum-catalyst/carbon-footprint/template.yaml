@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Sample SAM Template for my first API with IaC
+
+Globals:
+    # Enable Logs
+    Api:
+        MethodSettings:
+            - ResourcePath: "/*"
+              HttpMethod: "*"
+              DataTraceEnabled: True
+              LoggingLevel: INFO
+              MetricsEnabled: True
+    Function:
+        Timeout: 3
+        Runtime: python3.7
+
+Resources:
+
+    # REST API                                                             
+    CarbonFootprintAPI:
+        Type: AWS::Serverless::Api
+        Properties:
+            StageName: dev
+            OpenApiVersion: 3.0.3
+            DefinitionBody: # an OpenApi definition
+                "Fn::Transform":
+                    Name: "AWS::Include"
+                    Parameters:
+                        Location: "openapi.yaml"
+            EndpointConfiguration:
+                Type: REGIONAL
+
+
+    # Lambda functions                                                     
+    CarbonCalculator:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: handlers/
+            Handler: get-carbon-footprint.lambda_handler
+            
+    # Execution Role
+    LambdaExecutionRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                  - Effect: Allow
+                    Principal:
+                      Service:
+                        - apigateway.amazonaws.com
+                    Action:
+                      - 'sts:AssumeRole'
+            Policies:
+                - PolicyName: AllowLambdaExec
+                  PolicyDocument:
+                    Version: "2012-10-17"
+                    Statement:
+                      - Effect: Allow
+                        Action: 'lambda:InvokeFunction'
+                        Resource: !GetAtt CarbonCalculator.Arn
+                
+    # Cognito
+    CarbonFootprintUserPool:
+        Type: AWS::Cognito::UserPool
+        Properties:
+            UserPoolName: CarbonFootprintUserPool
+            Policies:
+                PasswordPolicy:
+                    MinimumLength: 8
+    
+    CarbonFootprintUserPoolClient:
+        Type: AWS::Cognito::UserPoolClient
+        Properties:
+            UserPoolId: !Ref CarbonFootprintUserPool
+            ClientName: Carbon-Footprint-App-Client
+            GenerateSecret: false
+            ExplicitAuthFlows:
+                - ALLOW_ADMIN_USER_PASSWORD_AUTH
+                - ALLOW_REFRESH_TOKEN_AUTH
+                - ALLOW_CUSTOM_AUTH
+                - ALLOW_USER_PASSWORD_AUTH
+                - ALLOW_USER_SRP_AUTH
+Outputs:
+    CarbonFootprintAPI:
+        Description: "API Gateway endpoint URL to call the carbon footprint api"
+        Value: !Sub "https://${CarbonFootprintAPI}.execute-api.${AWS::Region}.amazonaws.com/dev/"
+    CognitoUserPool:
+        Description: "Cognito User Pool Id"
+        Value: !Ref CarbonFootprintUserPool
+    CostCalculatorUserPoolClient:
+        Description: "App Client Id"
+        Value: !Ref CarbonFootprintUserPoolClient
