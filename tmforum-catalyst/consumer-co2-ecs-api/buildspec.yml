@@ -9,7 +9,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t consumerco2emission tmforum-catalyst/consumer-co2-ecs-api/co2edockerfile
+      - docker build -t consumerco2emission tmforum-catalyst/consumer-co2-ecs-api
       - docker tag consumerco2emission $AWS_ACCOUNT_ID.dkr.ecr.eu-west-1.amazonaws.com/$ECR_REPO:consumerco2emission
   post_build:
     commands:
