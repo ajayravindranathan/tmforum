@@ -1,0 +1,10 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "consumer-co2e-api"
+resolve_s3 = true
+s3_prefix = "consumer-co2e-api"
+region = "eu-west-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
+parameter_overrides = "VPCSecurityGroup=\"sg-0e88fab3d47376930\" VPCSubnet1=\"subnet-07bdeae1ca2042e8c\" VPCSubnet2=\"subnet-03e04494be0bb982a\" VPCSubnet3=\"subnet-012f0b30117cd7231\""

@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM template for the consumer CO2 emission API
+
+Globals:
+    # Enable Logs
+    Api:
+        MethodSettings:
+            - ResourcePath: "/*"
+              HttpMethod: "*"
+              DataTraceEnabled: True
+              LoggingLevel: INFO
+              MetricsEnabled: True
+    Function:
+        Timeout: 3
+        Runtime: python3.9
+        Environment:
+            Variables:
+                ANTHROPIC_API_KEY: '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'
+Resources:
+    MethodSettings:
+            - ResourcePath: "/*"
+              HttpMethod: "*"
+              DataTraceEnabled: True
+              LoggingLevel: INFO
+              MetricsEnabled: True
+    Function:
+        Timeout: 3
+        Runtime: python3.9
+
+Resources:
+
+    # REST API                                                             
+    ConsumerCo2eAPI:
+        Type: AWS::Serverless::Api
+        Properties:
+            StageName: dev
+            OpenApiVersion: 3.0.3
+            DefinitionBody: # an OpenApi definition
+                "Fn::Transform":
+                    Name: "AWS::Include"
+                    Parameters:
+                        Location: "openapi.yaml"
+            EndpointConfiguration:
+                Type: REGIONAL
+            
+    #Lambda layer
+    
+    LangchainLayer:
+        Type: AWS::Serverless::LayerVersion
+        Properties:
+            ContentUri: langchain-layer/
+            CompatibleRuntimes:
+                - python3.9
+        Metadata:
+            BuildMethod: python3.9
+    
+    LangchainLayerPermission:
+        Type: AWS::Lambda::LayerVersionPermission
+        Properties:
+            Action: lambda:GetLayerVersion
+            LayerVersionArn: !Ref LangchainLayer
+            Principal: !Ref AWS::AccountId
+    
+    # Lambda functions                                                     
+    ConsumerCO2eFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: handlers/
+            Handler: ConsumerCO2eFunction.lambda_handler
+            Layers:
+                - !Ref LangchainLayer
+            Timeout: 60
+            Policies:
+            - AmazonDynamoDBFullAccess
+            - AmazonSESFullAccess
+            - AmazonEventBridgeFullAccess
+    # Execution Role
+    LambdaExecutionRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                  - Effect: Allow
+                    Principal:
+                      Service:
+                        - apigateway.amazonaws.com
+                    Action:
+                      - 'sts:AssumeRole'
+            Policies:
+              - PolicyName: AllowLambdaExec
+                PolicyDocument:
+                    Version: "2012-10-17"
+                    Statement:
+                      - Effect: Allow
+                        Action: 'lambda:InvokeFunction'
+                        Resource: !GetAtt ConsumerCO2eFunction.Arn
+
+Outputs:
+    ConsumerCo2eAPI:
+        Description: "API Gateway endpoint URL to call the ConsumerCo2e api"
+        Value: !Sub "https://${ConsumerCo2eAPI}.execute-api.${AWS::Region}.amazonaws.com/dev/"
+    ConsumerCO2eFunction:
+        Description: "Lambda function that retrieves the data from snowflake based on the natural language query from the chatbot"
+        Value: !Ref ConsumerCO2eFunction

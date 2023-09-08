@@ -1,0 +1,42 @@
+openapi: "3.0.1"
+info:
+   title: "consumer-co2e-api"
+   description: "This API creates retention offers using a large language model and sends an email with the content of the offer"
+   version: "1.0"
+
+paths:
+
+    /consumerco2e:
+        post:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+            responses:
+                "200":
+                    description: "200 response"
+            #security:
+              #- CCJAuthorizer: []
+            x-amazon-apigateway-integration:
+                httpMethod: "POST"
+                credentials:
+                    Fn::GetAtt: [LambdaExecutionRole, Arn]
+                uri: 
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ConsumerCO2eFunction.Arn}/invocations"
+                responses:
+                    default:
+                        statusCode: "200"
+                passthroughBehavior: "when_no_match"
+                type: "aws"
+
+# components:
+#     securitySchemes:
+#         CCJAuthorizer:
+#             type: apiKey
+#             name: Authorization
+#             in: header
+#             x-amazon-apigateway-authtype: cognito_user_pools
+#             x-amazon-apigateway-authorizer:
+#                 type: cognito_user_pools
+#                 providerARNs:
+#                   - Fn::GetAtt: [CCJUserPool, Arn]

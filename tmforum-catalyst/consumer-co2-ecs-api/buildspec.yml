@@ -1,0 +1,18 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.eu-west-1.amazonaws.com
+      - docker login -u $dockerhub_username -p $dockerhub_password
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t consumerco2emission .
+      - docker tag consumerco2emission $AWS_ACCOUNT_ID.dkr.ecr.eu-west-1.amazonaws.com/$ECR_REPO:consumerco2emission
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.eu-west-1.amazonaws.com/$ECR_REPO:consumerco2emission

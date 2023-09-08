@@ -1,0 +1,6 @@
+langchain
+sqlalchemy==1.4.47
+snowflake-sqlalchemy
+urllib3==1.26.6
+botocore
+requests
