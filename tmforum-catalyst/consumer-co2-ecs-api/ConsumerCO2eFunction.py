@@ -24,16 +24,17 @@ from langchain_experimental.sql.base import SQLDatabaseSequentialChain
 
 #connect to anthropic model
 sf_secret_id = "anthropic"
-response = client.get_secret_value(SecretId=sf_secret_id)
+secret_mgr_client = boto3.client('secretsmanager')
+response = secret_mgr_client.get_secret_value(SecretId=sf_secret_id)
 #ANTHROPIC_API_KEY = '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'
 llm = ChatAnthropic(temperature=0, anthropic_api_key=ANTHROPIC_API_KEY, max_tokens_to_sample = 512)
 
 ## connect to snowflake
 ### snowflake variables
 sf_account_id = "ELPHBMX.TMFCATALYST"
-client = boto3.client('secretsmanager')
+
 sf_secret_id = "snowflake_credentials"
-response = client.get_secret_value(SecretId=sf_secret_id)
+response = secret_mgr_client.get_secret_value(SecretId=sf_secret_id)
 secrets_credentials = json.loads(response['SecretString'])
 sf_password = secrets_credentials['password']
 sf_username = secrets_credentials['username']
