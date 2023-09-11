@@ -1,11 +1,11 @@
 import json
 #from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 import os
-import boto3
-import re
-import requests
+# import boto3
+# import re
+# import requests
 from time import strftime, localtime
-import sqlalchemy
+#import sqlalchemy
 from sqlalchemy import create_engine
 from snowflake.sqlalchemy import URL
 
@@ -45,7 +45,7 @@ def lambda_handler(event, context):
     # prompt=f"{HUMAN_PROMPT} {subprompt7}\n{AI_PROMPT}",
     # )
     # print(completion.completion)
-    
+    ANTHROPIC_API_KEY = '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'
     llm = ChatAnthropic(temperature=0, anthropic_api_key=ANTHROPIC_API_KEY, max_tokens_to_sample = 512)
     
     # raw_offer = completion.completion
