@@ -33,7 +33,7 @@ llm = ChatAnthropic(temperature=0, anthropic_api_key=ANTHROPIC_API_KEY, max_toke
 
 ## connect to snowflake
 ### snowflake variables
-sf_account_id = "ELPHBMX.TMFCATALYST"
+sf_account_id = "cn30094.eu-west-1"
 
 sf_secret_id = "snowflake_credentials"
 response = secret_mgr_client.get_secret_value(SecretId=sf_secret_id)
