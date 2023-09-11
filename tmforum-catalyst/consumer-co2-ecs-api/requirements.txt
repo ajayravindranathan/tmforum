@@ -4,3 +4,4 @@ snowflake-sqlalchemy
 urllib3==1.26.6
 botocore
 requests
+#anthropic

@@ -1,5 +1,5 @@
 import json
-from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
+#from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 import os
 import boto3
 import re
@@ -34,17 +34,17 @@ def lambda_handler(event, context):
     #call anthropic to generate the offer
     #client = anthropic.Client('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')
     #client = anthropic.Client(os.environ['ANTHROPIC_API_KEY'])
-    anthropic = Anthropic(
+    #anthropic = Anthropic(
     # defaults to os.environ.get("ANTHROPIC_API_KEY")
-    api_key=os.environ['ANTHROPIC_API_KEY'],
-    )
-    completion = anthropic.completions.create(
-    model="claude-2",
-    max_tokens_to_sample=1000,
-    temperature = 0,
-    prompt=f"{HUMAN_PROMPT} {subprompt7}\n{AI_PROMPT}",
-    )
-    print(completion.completion)
+    #api_key=os.environ['ANTHROPIC_API_KEY'],
+    #)
+    # completion = anthropic.completions.create(
+    # model="claude-2",
+    # max_tokens_to_sample=1000,
+    # temperature = 0,
+    # prompt=f"{HUMAN_PROMPT} {subprompt7}\n{AI_PROMPT}",
+    # )
+    # print(completion.completion)
     
     llm = ChatAnthropic(temperature=0, anthropic_api_key=ANTHROPIC_API_KEY, max_tokens_to_sample = 512)
     
