@@ -1,28 +1,27 @@
 import json
-#from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
-import os
-# import boto3
-# import re
-# import requests
-from time import strftime, localtime
-#import sqlalchemy
+import boto3
+
+import sqlalchemy
 from sqlalchemy import create_engine
 from snowflake.sqlalchemy import URL
 
 from langchain.docstore.document import Document
-from langchain import PromptTemplate,SagemakerEndpoint,SQLDatabase, SQLDatabaseChain, LLMChain
+from langchain import PromptTemplate,SagemakerEndpoint,SQLDatabase, LLMChain
 from langchain.llms.sagemaker_endpoint import LLMContentHandler
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts.prompt import PromptTemplate
-from langchain.chains import SQLDatabaseSequentialChain
 
 from langchain.chains.api.prompt import API_RESPONSE_PROMPT
 from langchain.chains import APIChain
 from langchain.prompts.prompt import PromptTemplate
 from langchain.chat_models import ChatAnthropic
+from langchain.chat_models import ChatOpenAI
 from langchain.chains.api import open_meteo_docs
 
 from typing import Dict
+
+from langchain_experimental.sql import SQLDatabaseChain
+from langchain_experimental.sql.base import SQLDatabaseSequentialChain
 
 def lambda_handler(event, context):
     
