@@ -27,7 +27,7 @@ sf_secret_id = "anthropic"
 secret_mgr_client = boto3.client('secretsmanager')
 response = secret_mgr_client.get_secret_value(SecretId=sf_secret_id)
 anthropic_credentials = json.loads(response['SecretString'])
-sf_password = anthropic_credentials['ANTHROPIC_API_KEY']
+ANTHROPIC_API_KEY = anthropic_credentials['ANTHROPIC_API_KEY']
 #ANTHROPIC_API_KEY = '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'
 llm = ChatAnthropic(temperature=0, anthropic_api_key=ANTHROPIC_API_KEY, max_tokens_to_sample = 512)
 
