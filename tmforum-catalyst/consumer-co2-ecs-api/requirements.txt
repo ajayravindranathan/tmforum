@@ -5,4 +5,5 @@ urllib3==1.26.6
 botocore
 requests
 boto3
+langchain-experimental
 #anthropic
