@@ -26,9 +26,9 @@ from langchain_experimental.sql.base import SQLDatabaseSequentialChain
 def lambda_handler(event, context):
     
     
-    subprompt7 = f"Generate an SQL query to count the number chickens in a table that has chickens as a column"
+    #subprompt7 = f"Generate an SQL query to count the number chickens in a table that has chickens as a column"
     
-    print("Anthropic API key is: " + os.environ['ANTHROPIC_API_KEY'])
+    #print("Anthropic API key is: " + os.environ['ANTHROPIC_API_KEY'])
     
     #call anthropic to generate the offer
     #client = anthropic.Client('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')
@@ -47,6 +47,21 @@ def lambda_handler(event, context):
     ANTHROPIC_API_KEY = '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'
     llm = ChatAnthropic(temperature=0, anthropic_api_key=ANTHROPIC_API_KEY, max_tokens_to_sample = 512)
     
+
+    ## snowflake variables
+    sf_account_id = "ELPHBMX.TMFCATALYST"
+    #sf_secret_id =<your snowflake credentials secret id>
+    dwh = "dev_wh"
+    db = "carbon_optimization"
+    schema = "PUBLIC"
+    table = "CELL_TELEMETRY_V4"
+    sf_password = "Test@123456"
+    sf_username = "RAJAY"
+    ##  Create the snowflake connection string
+    connection_string = f"snowflake://{sf_username}:{sf_password}@{sf_account_id}/{db}/{schema}?warehouse={dwh}"
+    ##  Create the snowflake  SQLAlchemy engine
+    engine_snowflake = create_engine(connection_string, echo=False)
+    dbsnowflake = SQLDatabase(engine_snowflake)
     # raw_offer = completion.completion
     # raw_offer_sansfirstline = '\n'.join(raw_offer.split('\n')[1:])
     # offer_names = ["Talk, Surf and Stream Amazon Prime","Talk, Surf and Stream Netflix","Talk, Surf, Roam and Stream Amazon Prime", "Talk, Surf, Roam and Stream Netflix", "Talk, Surf and Roam", "Talk, Surf, Roam and Stream Big", "Keep in touch Basic"]
