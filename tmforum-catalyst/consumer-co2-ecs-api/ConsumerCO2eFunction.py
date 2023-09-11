@@ -40,8 +40,8 @@ response = secret_mgr_client.get_secret_value(SecretId=sf_secret_id)
 secrets_credentials = json.loads(response['SecretString'])
 sf_password = secrets_credentials['password']
 sf_username = secrets_credentials['username']
-dwh = "dev_wh"
-db = "carbon_optimization"
+dwh = "DEV_WH"
+db = "CARBON_OPTIMIZATION"
 schema = "PUBLIC"
 table = "CELL_TELEMETRY_V4"
 #sf_password = "Test@123456"
@@ -49,7 +49,7 @@ table = "CELL_TELEMETRY_V4"
 
 ##  Create the snowflake connection string
 connection_string = f"snowflake://{sf_username}:{sf_password}@{sf_account_id}/{db}/{schema}?warehouse={dwh}"
-
+print('connection_string is:'+connection_string)
 ##  Create the snowflake  SQLAlchemy engine
 engine_snowflake = create_engine(connection_string, echo=False)
 dbsnowflake = SQLDatabase(engine_snowflake)
