@@ -2,6 +2,7 @@ FROM python:3.9
 WORKDIR /app
 COPY UIStreamlit.py /app/
 COPY requirements.txt /app/
+COPY sqldbchain.py /app/
 RUN pip install -r requirements.txt
 EXPOSE 8501
 COPY . /app/
