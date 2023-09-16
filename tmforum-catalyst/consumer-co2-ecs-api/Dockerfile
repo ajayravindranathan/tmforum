@@ -1,5 +1,8 @@
 FROM python:3.9
+WORKDIR /app
 COPY UIStreamlit.py .
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-CMD ["streamlit","run", "UIStreamlit.py"]
+EXPOSE 8501
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+ENTRYPOINT ["streamlit", "run", "UIStreamlit.py"]
