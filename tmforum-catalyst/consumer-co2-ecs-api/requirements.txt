@@ -1,4 +1,4 @@
-langchain
+langchain==0.0.281
 sqlalchemy==1.4.47
 snowflake-sqlalchemy
 urllib3==1.26.6
@@ -7,3 +7,4 @@ requests
 boto3
 langchain-experimental
 anthropic
+streamlit
