@@ -31,6 +31,7 @@ anthropic_secret_id = "anthropic"
 response = client.get_secret_value(SecretId=anthropic_secret_id)
 secrets_credentials = json.loads(response['SecretString'])
 ANTHROPIC_API_KEY = secrets_credentials['ANTHROPIC_API_KEY']
+print("ANTHROPIC_API_KEY is:"+ANTHROPIC_API_KEY)
 region = "eu-west-1"
 
 # Define your LLM and database connection
