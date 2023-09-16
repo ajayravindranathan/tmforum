@@ -26,11 +26,15 @@ import os  # Import the os module for working with environment variables
 from pandas import DataFrame
 
 # Get the API key and region from environment variables
-api_key = os.getenv("ANTHROPIC_API_KEY")
+client = boto3.client('secretsmanager')
+anthropic_secret_id = "anthropic"
+response = client.get_secret_value(SecretId=anthropic_secret_id)
+secrets_credentials = json.loads(response['SecretString'])
+ANTHROPIC_API_KEY = secrets_credentials['ANTHROPIC_API_KEY']
 region = "eu-west-1"
 
 # Define your LLM and database connection
-llm = Anthropic(temperature=0.001, anthropic_api_key=api_key, 
+llm = Anthropic(temperature=0.001, anthropic_api_key=ANTHROPIC_API_KEY, 
                 max_tokens_to_sample=50000, 
                 verbose=True)  # Use the region from environment variable
 
@@ -38,33 +42,36 @@ llm = Anthropic(temperature=0.001, anthropic_api_key=api_key,
 from sqlalchemy import create_engine
 
 # Create connection to Snowflake 
-account_identifier = 'AFOAONW-DU82134'
-user = 'guybenb'
-password = 'cckQ7zrs'
-database_name = 'TELECOM_DATA_FABRIC'
-schema_name = 'DBT_DAN'
-warehouse_name = 'TELCO_WH'
+account_identifier = 'cn30094.eu-west-1'
+sf_secret_id = "snowflake_credentials"
+response = client.get_secret_value(SecretId=sf_secret_id)
+secrets_credentials = json.loads(response['SecretString'])
+password = secrets_credentials['password']
+user = secrets_credentials['username']
+database_name = 'CARBON_OPTIMIZATION'
+schema_name = 'PUBLIC'
+warehouse_name = 'DEV_WH'
 role_name = 'ACCOUNTADMIN'
 conn_string = f"snowflake://{user}:{password}@{account_identifier}/{database_name}/{schema_name}?warehouse={warehouse_name}&role={role_name}"
 engine_snowflake = create_engine(conn_string)
 dbsnowflake = SQLDatabase(engine_snowflake)
-gdc = ['snowflakedtw']
+gdc = ['snowflake-carbon-optimization']
 
 # Define the Streamlit app
 def main():
-    st.title("Network Genius")
+    st.title("Digital Carbon Footprint Assistant")
     
     
     # Demo Description
     st.sidebar.subheader("Demo Description")
     description = """
-    Explore how our advanced data platform and Generative AI can simplify your network operations.
+    Explore how our advanced data platform and Generative AI can simplify your sustainability strategy analysis and network optimiization.
     """
     st.sidebar.markdown(description, unsafe_allow_html=True)
 
     # Template selection sidebar
     st.sidebar.subheader("Data Catalog Selection")
-    glue_catalogue = st.sidebar.selectbox("Select a Glue Catalog:", ["snowflakedtw", "other_catalog"])  # Add more catalogs if needed
+    glue_catalogue = st.sidebar.selectbox("Select a Glue Catalog:", ["snowflake-carbon-optimization", "other_catalog"])  # Add more catalogs if needed
 
 #     # Template editing section
 #     st.sidebar.subheader("Prompt Engineering")
@@ -87,7 +94,7 @@ def main():
     """
 
     # User input section
-    query = st.text_area("Talk to your telco data:")
+    query = st.text_area("Talk to your carbon footpriint data:")
     temperature = st.slider("Select temperature:", min_value=0.001, max_value=1.0, step=0.001, value=0.001)
 
     if st.button("Run Query"):
