@@ -28,14 +28,14 @@ class ConsumerCo2EAppStack(Stack):
         #Create a Fargate container image
         ecr_repository = repository.Repository.from_repository_name(self,
                 id              = "ECR",
-                repository_name = "tmfdtw"
+                repository_name = "tmfdtw:consumerco2emission"
             )
         image = ecs.ContainerImage.from_ecr_repository(ecr_repository)
 
         ecs_patterns.ApplicationLoadBalancedFargateService(self, "ConsumerCO2eService",
             cluster=cluster,            # Required
             cpu=512,                    # Default is 256
-            desired_count=6,            # Default is 1
+            desired_count=1,            # Default is 1
             task_image_options=ecs_patterns.ApplicationLoadBalancedTaskImageOptions(
                 image=image),
             # task_subnets=ec2.SubnetSelection(
