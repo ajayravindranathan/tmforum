@@ -120,8 +120,11 @@ def main():
 def run_query(query, template, temperature):
     db_chain = make_chain(query, template, temperature)
     response = db_chain.run(query)
-    sql = get_query(response)
-    sql_results = execute_sql_query(sql)  # Execute the SQL query and get the results
+    sql = get_query_retry(response)
+    if sql:
+        sql_results = execute_sql_query(sql)  # Execute the SQL query and get the results
+    else:
+        sql_results = "No sql query found after 3 tries"
     return response, sql_results
 
 # Define the make_chain function
@@ -158,6 +161,15 @@ def get_query(text):
   else:
     select_idx = text.index('SELECT')
     return text[select_idx:].strip()
+  # If no SQL found, return None
+  return None
+
+def get_query_retry(text):
+  for i in range(3):
+    result = extract_sql(text)
+    if result is not None:
+      return result
+  return None
 
 
 if __name__ == "__main__":
