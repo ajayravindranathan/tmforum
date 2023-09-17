@@ -120,7 +120,7 @@ def main():
 def run_query(query, template, temperature):
     db_chain = make_chain(query, template, temperature)
     response = db_chain.run(query)
-    sql = extract_sql(response)
+    sql = get_query(response)
     sql_results = execute_sql_query(sql)  # Execute the SQL query and get the results
     return response, sql_results
 
@@ -147,6 +147,17 @@ def extract_sql(sql: str):
         return sql[start:end]
     else:
         return None
+
+def get_query(text):
+  import re
+  if '```sql' in text: 
+    match = re.search(r'```sql(.*?)```', text, re.DOTALL)
+    if match:
+      return match.group(1).strip()
+  
+  else:
+    select_idx = text.index('SELECT')
+    return text[select_idx:].strip()
 
 
 if __name__ == "__main__":
