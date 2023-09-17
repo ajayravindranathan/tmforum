@@ -91,6 +91,8 @@ def main():
     Only use the columns from the ctc table from the below tables:
     {table_info}
     
+    Respond with only the sql query and nothing else.
+
     Question: {input}
     """
 
@@ -172,15 +174,17 @@ def get_query(text):
     if match:
       return match.group(1).strip()
   
-  elif 'SELECT' in text:
-    select_idx = text.index('SELECT')
-    return text[select_idx:].strip()
-  
-  else:
-    if 'SELECT' in text: 
+  elif 'SELECT' in text and ';' in text: 
         match = re.search(r'SELECT(.*?);', text, re.DOTALL)
         if match:
             return match.group(1).strip()
+        
+  else:
+    if  'SELECT' in text:
+        select_idx = text.index('SELECT')
+        return text[select_idx:].strip()
+  
+  
     
   # If no SQL found, return None
   return None
