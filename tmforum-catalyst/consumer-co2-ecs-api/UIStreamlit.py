@@ -64,6 +64,8 @@ def main():
     st.subheader("Powered by Generative AI from AWS")
     
     # Demo Description
+    logo_url = './1024px-Amazon_Web_Services_Logo.svg.png'
+    st.sidebar.image(logo_url)
     st.sidebar.subheader("Demo Description")
     description = """
     Explore how our Amazon GenAI technology and Snowflake data platform can simplify your sustainability strategy analysis.
