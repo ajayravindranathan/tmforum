@@ -91,8 +91,16 @@ def main():
     Only use the columns from the ctc table from the below tables:
     {table_info}
     
-    Respond with only the sql query and nothing else.
-
+    Respond with only one sql query and nothing else.
+    
+    Example questions and outputs:
+    Example 1:
+    Question: what is the monthly trend of total co2 emission for all phone model Iphone 14 512GB in the year 2022?
+    Answer: SELECT phone_model, EXTRACT(MONTH FROM timestamp) AS month, SUM(co2_emission) AS total_co2 FROM ctc WHERE EXTRACT(YEAR FROM timestamp) = 2022 GROUP BY phone_model, EXTRACT(MONTH FROM timestamp) ORDER BY phone_model, month
+    Example 2:
+    Question: which are the greenest cell ids in the network?
+    Answer: SELECT tower_id, MIN(co2_emission) AS min_co2_emission FROM ctc WHERE green_charge_flag = '1' GROUP BY tower_id ORDER BY min_co2_emission ASC LIMIT 10
+    
     Question: {input}
     """
 
