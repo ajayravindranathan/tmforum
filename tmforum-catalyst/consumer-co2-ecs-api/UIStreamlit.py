@@ -165,8 +165,12 @@ def get_query(text):
       return match.group(1).strip()
   
   else:
-    select_idx = text.index('SELECT')
-    return text[select_idx:].strip()
+    if 'SELECT' in text: 
+        match = re.search(r'SELECT(.*?);', text, re.DOTALL)
+        if match:
+            return match.group(1).strip()
+    # select_idx = text.index('SELECT')
+    # return text[select_idx:].strip()
   # If no SQL found, return None
   return None
 
