@@ -85,10 +85,11 @@ def main():
 #     Question: {input}
 #     """)
 
-    template = """
+    template =  """
     Given an input question, create a syntactically correct {dialect} query to run.
     
-    Only use the table "ctc"
+    Only use the columns from the ctc table from the below tables:
+    {table_info}
     
     Question: {input}
     """
@@ -125,11 +126,8 @@ def run_query(query, template, temperature):
 
 # Define the make_chain function
 def make_chain(query, template, temperature):
-    # PROMPT_sql = PromptTemplate(
-    #     input_variables=["input", "table_info", "dialect"], template=template
-    # )
     PROMPT_sql = PromptTemplate(
-        input_variables=["input", "dialect"], template=template
+        input_variables=["input", "table_info", "dialect"], template=template
     )
     return SQLDatabaseChain2.from_llm(llm, dbsnowflake, prompt=PROMPT_sql, verbose=True)
 
