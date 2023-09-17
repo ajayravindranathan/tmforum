@@ -125,6 +125,9 @@ def run_query(query, template, temperature):
 
 # Define the make_chain function
 def make_chain(query, template, temperature):
+    # PROMPT_sql = PromptTemplate(
+    #     input_variables=["input", "table_info", "dialect"], template=template
+    # )
     PROMPT_sql = PromptTemplate(
         input_variables=["input", "table_info", "dialect"], template=template
     )
