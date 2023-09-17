@@ -88,8 +88,7 @@ def main():
     template = """
     Given an input question, create a syntactically correct {dialect} query to run.
     
-    Only use the following tables:
-    {table_info}
+    Only use the table "ctc"
     
     Question: {input}
     """
