@@ -109,6 +109,12 @@ def main():
             # Display the SQL query results
             st.subheader("SQL Query Results:")
             st.dataframe(sql_results)
+            if 'month' in sql_results.columns or 'timestamp' in sql_results.columns:
+               groupby_col = 'month' if 'month' in sql_results else 'timestamp'
+               numeric_cols = sql_results.select_dtypes('number').columns.tolist()
+               non_time_cols = [col for col in numeric_cols if col != groupby_col]
+               for col in non_time_cols:
+                  st.bar_chart(sql_results, y = col, x=groupby_col)
             # Display the explanation
             st.subheader("Explanation:")
             st.write(response)
