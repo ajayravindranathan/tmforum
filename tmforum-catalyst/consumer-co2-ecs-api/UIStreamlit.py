@@ -60,13 +60,13 @@ gdc = ['snowflake-carbon-optimization']
 
 # Define the Streamlit app
 def main():
-    st.title("Sustainability strategy assistant")
+    st.title("GenAI powered Sustainability strategy assistant")
     
     
     # Demo Description
     st.sidebar.subheader("Demo Description")
     description = """
-    Explore how our advanced data platform and Generative AI can simplify your sustainability strategy analysis.
+    Explore how our Amazon GenAI technology and Snowflake data platform can simplify your sustainability strategy analysis.
     """
     st.sidebar.markdown(description, unsafe_allow_html=True)
 
@@ -105,7 +105,7 @@ def main():
     """
 
     # User input section
-    query = st.text_area("Talk to your digital carbon footprint data:")
+    query = st.text_area("Talk to your digital carbon footprint data using Amazon GenAI:")
     temperature = st.slider("Select temperature:", min_value=0.001, max_value=1.0, step=0.001, value=0.001)
 
     if st.button("Run Query"):
