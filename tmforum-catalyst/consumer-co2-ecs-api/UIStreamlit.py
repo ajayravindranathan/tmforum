@@ -64,7 +64,7 @@ def main():
     st.subheader("Powered by Generative AI from AWS")
     
     # Demo Description
-    logo_url = './png-transparent-amazon-aws-logo.png'
+    logo_url = './Amazon-Web-Services-AWS-Emblem.png'
     st.sidebar.image(logo_url)
     st.sidebar.subheader("Demo Description")
     description = """
