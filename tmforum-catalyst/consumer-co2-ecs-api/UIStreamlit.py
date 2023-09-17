@@ -123,15 +123,23 @@ def main():
             st.warning("Please enter a query.")
 
 # Define the run_query function
-def run_query(query, template, temperature):
+def run_query(query, template, temperature, retries = 3):
     db_chain = make_chain(query, template, temperature)
-    response = db_chain.run(query)
-    sql = get_query_retry(response)
-    if sql:
-        sql_results = execute_sql_query(sql)  # Execute the SQL query and get the results
-    else:
-        sql_results = "No sql query found after 3 tries"
-    return response, sql_results
+    for i in range(retries):
+        try:
+            response = db_chain.run(query)
+            sql = get_query_retry(response)
+            if sql:
+                sql_results = execute_sql_query(sql)  # Execute the SQL query and get the results
+            else:
+                sql_results = "No sql query found after 3 tries"
+            return response, sql_results
+        except Exception as e:
+            if i == retries - 1:
+                raise
+            else:
+                pass
+    
 
 # Define the make_chain function
 def make_chain(query, template, temperature):
@@ -182,5 +190,6 @@ def get_query_retry(text):
   return None
 
 
+      
 if __name__ == "__main__":
     main()
