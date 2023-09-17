@@ -129,7 +129,7 @@ def make_chain(query, template, temperature):
     #     input_variables=["input", "table_info", "dialect"], template=template
     # )
     PROMPT_sql = PromptTemplate(
-        input_variables=["input", "table_info", "dialect"], template=template
+        input_variables=["input", "dialect"], template=template
     )
     return SQLDatabaseChain2.from_llm(llm, dbsnowflake, prompt=PROMPT_sql, verbose=True)
 
