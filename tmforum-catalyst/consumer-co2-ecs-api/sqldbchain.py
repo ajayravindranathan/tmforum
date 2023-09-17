@@ -130,7 +130,7 @@ class SQLDatabaseChain2(Chain):
                 callbacks=_run_manager.get_child(),
                 **llm_inputs,
             ).strip()
-            sql_cmd_mod = extract_sql(sql_cmd)
+            sql_cmd_mod = get_query_retry(sql_cmd)
             if sql_cmd_mod is not None:
                 sql_cmd = sql_cmd_mod
             
@@ -324,4 +324,22 @@ def extract_sql(sql: str) -> Optional[str]:
         return sql[start:end]
     else:
         return None
-        
+def get_query(text):
+  import re
+  if '```sql' in text: 
+    match = re.search(r'```sql(.*?)```', text, re.DOTALL)
+    if match:
+      return match.group(1).strip()
+  
+  else:
+    select_idx = text.index('SELECT')
+    return text[select_idx:].strip()
+  # If no SQL found, return None
+  return None
+
+def get_query_retry(text):
+  for i in range(3):
+    result = get_query(text)
+    if result is not None:
+      return result
+  return None

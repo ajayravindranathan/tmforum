@@ -166,7 +166,7 @@ def get_query(text):
 
 def get_query_retry(text):
   for i in range(3):
-    result = extract_sql(text)
+    result = get_query(text)
     if result is not None:
       return result
   return None
